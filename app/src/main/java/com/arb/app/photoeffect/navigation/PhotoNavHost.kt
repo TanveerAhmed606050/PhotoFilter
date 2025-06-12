@@ -1,0 +1,221 @@
+package com.arb.app.photoeffect.navigation
+
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.PermanentNavigationDrawer
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.window.layout.DisplayFeature
+import androidx.window.layout.FoldingFeature
+import com.arb.app.photoeffect.R
+import com.arb.app.photoeffect.ui.screen.intro.SplashScreen
+import com.arb.app.photoeffect.util.DevicePosture
+import com.arb.app.photoeffect.util.PhotoNavigationContentPosition
+import com.arb.app.photoeffect.util.PhotoNavigationType
+import com.arb.app.photoeffect.util.isBookPosture
+import com.arb.app.photoeffect.util.isSeparating
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun PhotoNavigation(
+    navController: NavHostController,
+    windowSize: WindowSizeClass,
+    displayFeatures: List<DisplayFeature>,
+    onLogOut: () -> Unit
+) {
+    val navigationType: PhotoNavigationType
+    val foldingFeature = displayFeatures.filterIsInstance<FoldingFeature>().firstOrNull()
+    val foldingDevicePosture = when {
+        isBookPosture(foldingFeature) ->
+            DevicePosture.BookPosture(foldingFeature.bounds)
+
+        isSeparating(foldingFeature) ->
+            DevicePosture.Separating(foldingFeature.bounds, foldingFeature.orientation)
+
+        else -> DevicePosture.NormalPosture
+    }
+    when (windowSize.widthSizeClass) {
+        WindowWidthSizeClass.Compact -> {
+            navigationType = PhotoNavigationType.BOTTOM_NAVIGATION
+        }
+
+        WindowWidthSizeClass.Medium -> {
+            navigationType = PhotoNavigationType.NAVIGATION_RAIL
+        }
+
+        WindowWidthSizeClass.Expanded -> {
+            navigationType = if (foldingDevicePosture is DevicePosture.BookPosture) {
+                PhotoNavigationType.NAVIGATION_RAIL
+            } else {
+                PhotoNavigationType.PERMANENT_NAVIGATION_DRAWER
+            }
+        }
+
+        else -> {
+            navigationType = PhotoNavigationType.BOTTOM_NAVIGATION
+        }
+    }
+
+    val navigationContentPosition = when (windowSize.heightSizeClass) {
+        WindowHeightSizeClass.Compact -> {
+            PhotoNavigationContentPosition.TOP
+        }
+
+        WindowHeightSizeClass.Medium,
+        WindowHeightSizeClass.Expanded -> {
+            PhotoNavigationContentPosition.CENTER
+        }
+
+        else -> {
+            PhotoNavigationContentPosition.TOP
+        }
+    }
+
+    val bottomMenuList = listOf(
+        BottomNavigationItem(
+            Screen.LoginScreen.route,
+            R.drawable.ic_launcher_background,
+
+            ),
+        BottomNavigationItem(
+            Screen.LoginScreen.route,
+            R.drawable.ic_launcher_background,
+        ),
+        BottomNavigationItem(
+            Screen.LoginScreen.route,
+            R.drawable.ic_launcher_background,
+        ),
+        BottomNavigationItem(
+            Screen.LoginScreen.route,
+            R.drawable.ic_launcher_background,
+        ),
+        BottomNavigationItem(
+            Screen.LoginScreen.route,
+            R.drawable.ic_launcher_background,
+
+            ),
+    )
+
+    PhotoNavigationWrapper(
+        navController = navController,
+        bottomMenuList = bottomMenuList,
+        navigationType = navigationType,
+        navigationContentPosition = navigationContentPosition,
+        onLogOut = { onLogOut() }
+    )
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun PhotoNavigationWrapper(
+    navController: NavHostController,
+    bottomMenuList: List<BottomNavigationItem>,
+    navigationType: PhotoNavigationType,
+    navigationContentPosition: PhotoNavigationContentPosition,
+    onLogOut: () -> Unit
+) {
+    val navigationActions = remember(navController) {
+        PSRNavigationActions(navController)
+    }
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val selectedDestination = navBackStackEntry?.destination?.route ?: Screen.LoginScreen.route
+    if (navigationType == PhotoNavigationType.PERMANENT_NAVIGATION_DRAWER) {
+        // TODO check on custom width of PermanentNavigationDrawer: b/232495216
+        PermanentNavigationDrawer(drawerContent = {
+            if (bottomMenuList.any { it.route == navController.currentDestination?.route }) PermanentNavigationDrawerContent(
+                bottomMenuList = bottomMenuList,
+                selectedDestination = selectedDestination,
+                navigationContentPosition = navigationContentPosition,
+                navigateToTopLevelDestination = navigationActions::navigateTo,
+                onLogOut = { onLogOut() }
+            )
+        }) {
+            PhotoAppContent(
+                bottomMenuList = bottomMenuList,
+                navigationType = navigationType,
+                navController = navController,
+                selectedDestination = selectedDestination,
+                navigateToTopLevelDestination = navigationActions::navigateTo,
+            )
+        }
+    } else {
+        PhotoAppContent(
+            bottomMenuList = bottomMenuList,
+            navigationType = navigationType,
+            navController = navController,
+            selectedDestination = selectedDestination,
+            navigateToTopLevelDestination = navigationActions::navigateTo
+        )
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun PhotoAppContent(
+    modifier: Modifier = Modifier,
+    bottomMenuList: List<BottomNavigationItem>,
+    navigationType: PhotoNavigationType,
+    navController: NavHostController,
+    selectedDestination: String,
+    navigateToTopLevelDestination: (BottomNavigationItem) -> Unit,
+) {
+    Row(modifier = modifier.fillMaxSize()) {
+        if (bottomMenuList.any { it.route == navController.currentDestination?.route }) AnimatedVisibility(
+            visible = navigationType == PhotoNavigationType.NAVIGATION_RAIL
+        ) {
+        }
+        Scaffold(
+            bottomBar = {
+                if (bottomMenuList.any { it.route == navController.currentDestination?.route }) {
+                    AnimatedVisibility(visible = navigationType == PhotoNavigationType.BOTTOM_NAVIGATION) {
+                        PhotoBottomNavigationBar(
+                            bottomMenuList = bottomMenuList,
+                            selectedDestination = selectedDestination,
+                            navigateToTopLevelDestination = navigateToTopLevelDestination
+                        )
+                    }
+                }
+            }
+        ) { innerPadding ->
+            PhotoNavHost(
+                navController = navController,
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .weight(1f),
+            )
+        }
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun PhotoNavHost(
+    navController: NavHostController,
+    modifier: Modifier
+) {
+    NavHost(navController, startDestination = Screen.SplashScreen.route) {
+        composable(
+            route = Screen.SplashScreen.route,
+            enterTransition = { EnterTransition.None },
+            exitTransition = { ExitTransition.None }
+        ) {
+            SplashScreen(navController)
+        }
+    }
+}

@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">PhotoEffect</string>
+    <string name="logout">Logout</string>
+    <string name="account_logout_warning">Are you sure?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
+</resources>
