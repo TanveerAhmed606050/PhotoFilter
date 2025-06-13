@@ -34,13 +34,13 @@ val Typography = Typography(
     )
     */
 )
-val regularFont = FontFamily(//400
+val RegularFont = FontFamily(//400
     Font(R.font.almarai_regular)
 )
-val boldFont = FontFamily(//700
+val BoldFont = FontFamily(//700
     Font(R.font.almarai_bold)
 )
-val mediumFont = FontFamily(//500
+val MediumFont = FontFamily(//500
     Font(R.font.almarai_light)
 )
 val ExtraBoldFont = FontFamily(//800

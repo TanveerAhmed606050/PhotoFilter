@@ -8,9 +8,7 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.PermanentNavigationDrawer
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
@@ -24,9 +22,10 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.window.layout.DisplayFeature
 import androidx.window.layout.FoldingFeature
 import com.arb.app.photoeffect.R
+import com.arb.app.photoeffect.ui.screen.home.HomeScreen
 import com.arb.app.photoeffect.ui.screen.intro.SplashScreen
+import com.arb.app.photoeffect.ui.screen.profile.SettingScreen
 import com.arb.app.photoeffect.util.DevicePosture
-import com.arb.app.photoeffect.util.PhotoNavigationContentPosition
 import com.arb.app.photoeffect.util.PhotoNavigationType
 import com.arb.app.photoeffect.util.isBookPosture
 import com.arb.app.photoeffect.util.isSeparating
@@ -37,7 +36,6 @@ fun PhotoNavigation(
     navController: NavHostController,
     windowSize: WindowSizeClass,
     displayFeatures: List<DisplayFeature>,
-    onLogOut: () -> Unit
 ) {
     val navigationType: PhotoNavigationType
     val foldingFeature = displayFeatures.filterIsInstance<FoldingFeature>().firstOrNull()
@@ -72,52 +70,33 @@ fun PhotoNavigation(
         }
     }
 
-    val navigationContentPosition = when (windowSize.heightSizeClass) {
-        WindowHeightSizeClass.Compact -> {
-            PhotoNavigationContentPosition.TOP
-        }
-
-        WindowHeightSizeClass.Medium,
-        WindowHeightSizeClass.Expanded -> {
-            PhotoNavigationContentPosition.CENTER
-        }
-
-        else -> {
-            PhotoNavigationContentPosition.TOP
-        }
-    }
-
     val bottomMenuList = listOf(
         BottomNavigationItem(
-            Screen.LoginScreen.route,
-            R.drawable.ic_launcher_background,
-
+            Screen.HomeScreen.route,
+            R.drawable.home_ic,
             ),
         BottomNavigationItem(
-            Screen.LoginScreen.route,
-            R.drawable.ic_launcher_background,
+            Screen.SettingScreen.route,
+            R.drawable.timer_ic,
         ),
         BottomNavigationItem(
             Screen.LoginScreen.route,
-            R.drawable.ic_launcher_background,
+            android.R.drawable.ic_menu_add,
         ),
         BottomNavigationItem(
-            Screen.LoginScreen.route,
-            R.drawable.ic_launcher_background,
+            Screen.SettingScreen.route,
+            R.drawable.timer_ic,
         ),
         BottomNavigationItem(
-            Screen.LoginScreen.route,
-            R.drawable.ic_launcher_background,
-
+            Screen.SettingScreen.route,
+            R.drawable.settings_ic,
             ),
     )
 
     PhotoNavigationWrapper(
         navController = navController,
         bottomMenuList = bottomMenuList,
-        navigationType = navigationType,
-        navigationContentPosition = navigationContentPosition,
-        onLogOut = { onLogOut() }
+        navigationType = navigationType
     )
 }
 
@@ -127,42 +106,19 @@ fun PhotoNavigationWrapper(
     navController: NavHostController,
     bottomMenuList: List<BottomNavigationItem>,
     navigationType: PhotoNavigationType,
-    navigationContentPosition: PhotoNavigationContentPosition,
-    onLogOut: () -> Unit
 ) {
     val navigationActions = remember(navController) {
         PSRNavigationActions(navController)
     }
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val selectedDestination = navBackStackEntry?.destination?.route ?: Screen.LoginScreen.route
-    if (navigationType == PhotoNavigationType.PERMANENT_NAVIGATION_DRAWER) {
-        // TODO check on custom width of PermanentNavigationDrawer: b/232495216
-        PermanentNavigationDrawer(drawerContent = {
-            if (bottomMenuList.any { it.route == navController.currentDestination?.route }) PermanentNavigationDrawerContent(
-                bottomMenuList = bottomMenuList,
-                selectedDestination = selectedDestination,
-                navigationContentPosition = navigationContentPosition,
-                navigateToTopLevelDestination = navigationActions::navigateTo,
-                onLogOut = { onLogOut() }
-            )
-        }) {
-            PhotoAppContent(
-                bottomMenuList = bottomMenuList,
-                navigationType = navigationType,
-                navController = navController,
-                selectedDestination = selectedDestination,
-                navigateToTopLevelDestination = navigationActions::navigateTo,
-            )
-        }
-    } else {
-        PhotoAppContent(
-            bottomMenuList = bottomMenuList,
-            navigationType = navigationType,
-            navController = navController,
-            selectedDestination = selectedDestination,
-            navigateToTopLevelDestination = navigationActions::navigateTo
-        )
-    }
+    PhotoAppContent(
+        bottomMenuList = bottomMenuList,
+        navigationType = navigationType,
+        navController = navController,
+        selectedDestination = selectedDestination,
+        navigateToTopLevelDestination = navigationActions::navigateTo
+    )
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -216,6 +172,20 @@ fun PhotoNavHost(
             exitTransition = { ExitTransition.None }
         ) {
             SplashScreen(navController)
+        }
+        composable(
+            route = Screen.HomeScreen.route,
+            enterTransition = { EnterTransition.None },
+            exitTransition = { ExitTransition.None }
+        ) {
+            HomeScreen(navController)
+        }
+        composable(
+            route = Screen.SettingScreen.route,
+            enterTransition = { EnterTransition.None },
+            exitTransition = { ExitTransition.None }
+        ) {
+            SettingScreen(navController)
         }
     }
 }

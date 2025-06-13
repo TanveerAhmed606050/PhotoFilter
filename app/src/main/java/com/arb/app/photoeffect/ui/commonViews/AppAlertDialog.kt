@@ -35,9 +35,9 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.arb.app.photoeffect.R
 import com.arb.app.photoeffect.ui.theme.AppBG
+import com.arb.app.photoeffect.ui.theme.BoldFont
 import com.arb.app.photoeffect.ui.theme.DarkBlue
-import com.arb.app.photoeffect.ui.theme.boldFont
-import com.arb.app.photoeffect.ui.theme.regularFont
+import com.arb.app.photoeffect.ui.theme.RegularFont
 
 @Composable
 fun LogoutDialog(
@@ -88,7 +88,7 @@ fun LogoutDialog(
                     ),
                     textAlign = TextAlign.Center,
                     fontSize = 16.sp,
-                    fontFamily = boldFont,
+                    fontFamily = BoldFont,
                     color = DarkBlue,
                 )
                 Text(
@@ -96,7 +96,7 @@ fun LogoutDialog(
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
                     fontSize = 14.sp,
-                    fontFamily = regularFont,
+                    fontFamily = RegularFont,
                     color = DarkBlue,
                 )
                 HorizontalDivider(thickness = 0.5.dp, color = Color.DarkGray)
@@ -111,7 +111,7 @@ fun LogoutDialog(
                         Text(
                             stringResource(id = R.string.no),
                             fontSize = 14.sp,
-                            fontFamily = boldFont,
+                            fontFamily = BoldFont,
                             color = DarkBlue
                         )
                     }
@@ -128,7 +128,7 @@ fun LogoutDialog(
                             stringResource(id = R.string.yes),
                             color = DarkBlue,
                             fontSize = 14.sp,
-                            fontFamily = boldFont
+                            fontFamily = BoldFont
                         )
                     }
                 }

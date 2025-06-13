@@ -52,22 +52,9 @@ class MainActivity : ComponentActivity() {
                         navController = navController,
                         windowSize = windowSize,
                         displayFeatures = displayFeatures,
-                        onLogOut = {
-                            isLogout = true
-                        }
                     )
                 }
             }
-            if (isLogout) LogoutDialog(onDismissRequest = {
-                isLogout = false
-            }, onOkClick = {
-                isLogout = false
-                userPreference.clearStorage()
-                LogoutSession.clearError()
-                navController.navigate(Screen.LoginScreen.route) {
-                    popUpTo(navController.graph.startDestinationId) { inclusive = true }
-                }
-            })
 
             LaunchedEffect(LogoutSession.errorMessages) {
                 scope.launch {

@@ -6,6 +6,8 @@ import androidx.navigation.NavHostController
 sealed class Screen(val route: String) {
     data object SplashScreen : Screen("splashScreen")
     data object LoginScreen : Screen("loginScreen")
+    data object HomeScreen : Screen("homeScreen")
+    data object SettingScreen : Screen("settingScreen")
 }
 
 class PSRNavigationActions(private val navController: NavHostController) {
