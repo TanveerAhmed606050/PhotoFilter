@@ -53,13 +53,12 @@ fun HomeScreenUI() {
         modifier = Modifier
             .fillMaxSize()
             .background(
-                Color.Black
-//                Brush.verticalGradient(
-//                    colors = listOf(
-//                        Color(0xFF00475C), // Dark top
-//                        Color(0xFF007E9F)  // Lighter bottom
-//                    )
-//                )
+                Brush.verticalGradient(
+                    colors = listOf(
+                        Color(0xFF00475C), // Dark top
+                        Color(0xFF007E9F)  // Lighter bottom
+                    )
+                )
             )
             .padding(16.dp)
             .verticalScroll(rememberScrollState()),
@@ -117,7 +116,8 @@ fun HomeScreenUI() {
 
         Spacer(modifier = Modifier.height(24.dp))
         Row(
-            Modifier.fillMaxWidth()
+            Modifier
+                .fillMaxWidth()
                 .padding(bottom = 100.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(20.dp)

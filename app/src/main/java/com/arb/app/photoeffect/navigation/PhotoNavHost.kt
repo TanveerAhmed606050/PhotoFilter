@@ -23,13 +23,15 @@ import androidx.window.layout.DisplayFeature
 import androidx.window.layout.FoldingFeature
 import com.arb.app.photoeffect.R
 import com.arb.app.photoeffect.ui.screen.effect.ChooseEffectScreen
-import com.arb.app.photoeffect.ui.screen.effect.UploadPhotoScreen
-import com.arb.app.photoeffect.ui.screen.home.HomeScreen
 import com.arb.app.photoeffect.ui.screen.effect.MagicAvatarScreen
+import com.arb.app.photoeffect.ui.screen.effect.StyleSelectionScreen
+import com.arb.app.photoeffect.ui.screen.effect.UploadPhotoScreen
+import com.arb.app.photoeffect.ui.screen.history.HistoryScreen
+import com.arb.app.photoeffect.ui.screen.home.HomeScreen
 import com.arb.app.photoeffect.ui.screen.intro.GenderSelectionScreen
 import com.arb.app.photoeffect.ui.screen.intro.SplashScreen
+import com.arb.app.photoeffect.ui.screen.plus.ChoosePhotoScreen
 import com.arb.app.photoeffect.ui.screen.profile.SettingScreen
-import com.arb.app.photoeffect.ui.screen.effect.StyleSelectionScreen
 import com.arb.app.photoeffect.util.DevicePosture
 import com.arb.app.photoeffect.util.PhotoNavigationType
 import com.arb.app.photoeffect.util.isBookPosture
@@ -85,11 +87,11 @@ fun PhotoNavigation(
             R.drawable.magic_wand,
         ),
         BottomNavigationItem(
-            Screen.MagicScreen.route,
+            Screen.ChoosePhotoScreen.route,
             android.R.drawable.ic_menu_add,
         ),
         BottomNavigationItem(
-            Screen.SettingScreen.route,
+            Screen.HistoryScreen.route,
             R.drawable.timer_ic,
         ),
         BottomNavigationItem(
@@ -226,6 +228,20 @@ fun PhotoNavHost(
             exitTransition = { ExitTransition.None }
         ) {
             MagicAvatarScreen(navController)
+        }
+        composable(
+            route = Screen.ChoosePhotoScreen.route,
+            enterTransition = { EnterTransition.None },
+            exitTransition = { ExitTransition.None }
+        ) {
+            ChoosePhotoScreen(navController)
+        }
+        composable(
+            route = Screen.HistoryScreen.route,
+            enterTransition = { EnterTransition.None },
+            exitTransition = { ExitTransition.None }
+        ) {
+            HistoryScreen(navController)
         }
     }
 }

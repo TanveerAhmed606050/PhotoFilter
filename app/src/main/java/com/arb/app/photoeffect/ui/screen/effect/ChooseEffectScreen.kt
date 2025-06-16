@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -72,12 +73,18 @@ fun ChooseEffectUI(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black)
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(
+                        Color(0xFF00475C), // Dark top
+                        Color(0xFF007E9F)  // Lighter bottom
+                    )
+                )
+            )
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(color = Color.Black)
                 .padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 30.dp)
                 .verticalScroll(rememberScrollState()),
         ) {
@@ -98,7 +105,7 @@ fun ChooseEffectUI(
                 text = stringResource(id = R.string.hint_effect),
                 color = Color.White,
                 fontFamily = RegularFont,
-                fontSize = 12.sp
+                fontSize = 12.sp,
             )
             Spacer(modifier = Modifier.height(20.dp))
             Text(
