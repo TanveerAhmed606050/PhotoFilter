@@ -53,20 +53,22 @@ fun HomeScreenUI() {
         modifier = Modifier
             .fillMaxSize()
             .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFF00475C), // Dark top
-                        Color(0xFF007E9F)  // Lighter bottom
-                    )
-                )
+                Color.Black
+//                Brush.verticalGradient(
+//                    colors = listOf(
+//                        Color(0xFF00475C), // Dark top
+//                        Color(0xFF007E9F)  // Lighter bottom
+//                    )
+//                )
             )
             .padding(16.dp)
             .verticalScroll(rememberScrollState()),
     ) {
         Spacer(modifier = Modifier.statusBarsPadding())
         Header()
+        Spacer(modifier = Modifier.height(16.dp))
         CardWithImageAndText(
-            imageRes = R.drawable.ic_launcher_background,
+            imageRes = R.drawable.enhance_photo_2,
             title = "Enhance Photo",
             buttonText = stringResource(id = R.string.go)
         )
@@ -78,13 +80,13 @@ fun HomeScreenUI() {
         ) {
             SmallFeatureCard(
                 "Remove Scratch",
-                R.drawable.ic_launcher_background,
+                R.drawable.remove_scratch_2,
                 modifier = Modifier.weight(1f),
                 showArrow = true,
             )
             SmallFeatureCard(
                 "Colorize",
-                R.drawable.ic_launcher_background,
+                R.drawable.colourize,
                 showArrow = true,
                 modifier = Modifier.weight(1f)
             )
@@ -98,41 +100,41 @@ fun HomeScreenUI() {
         ) {
             PhotoCard(
                 title = "Cartoonize",
-                imageUrl = "",
+                imageUrl = R.drawable.cartonize,
                 modifier = Modifier.weight(1f)
             )
             PhotoCard(
-                title = "Cartoonize",
-                imageUrl = "",
+                title = "Style Transfer",
+                imageUrl = R.drawable.style_transfer,
                 modifier = Modifier.weight(1f)
             )
             PhotoCard(
-                title = "Cartoonize",
-                imageUrl = "",
+                title = "Edit",
+                imageUrl = R.drawable.edit,
                 modifier = Modifier.weight(1f)
             )
         }
 
         Spacer(modifier = Modifier.height(24.dp))
         Row(
-            Modifier.fillMaxWidth(),
+            Modifier.fillMaxWidth()
+                .padding(bottom = 100.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             SmallFeatureCard(
                 "Portrait Cutout",
-                R.drawable.ic_launcher_background,
+                R.drawable.potrait_cutout,
                 showArrow = true,
                 modifier = Modifier.weight(1f)
             )
             SmallFeatureCard(
                 "Art Filter",
-                R.drawable.ic_launcher_background,
+                R.drawable.art_filter,
                 showArrow = true,
                 modifier = Modifier.weight(1f)
             )
         }
-        Spacer(modifier = Modifier.height(50.dp))
 
     }
 }
@@ -140,7 +142,7 @@ fun HomeScreenUI() {
 @Composable
 fun PhotoCard(
     title: String,
-    imageUrl: String,
+    imageUrl: Int,
     onClick: () -> Unit = {},
     modifier: Modifier
 ) {
@@ -150,14 +152,13 @@ fun PhotoCard(
             .height(200.dp)
             .clip(RoundedCornerShape(16.dp))
     ) {
-        // Image with overlay effect
         AsyncImage(
             model = imageUrl,
             contentDescription = title,
             contentScale = ContentScale.Crop,
             modifier = Modifier.matchParentSize(),
-            error = painterResource(id = R.drawable.ic_launcher_background),
-            placeholder = painterResource(id = R.drawable.ic_launcher_background)
+            error = painterResource(id = imageUrl),
+            placeholder = painterResource(id = imageUrl)
         )
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,

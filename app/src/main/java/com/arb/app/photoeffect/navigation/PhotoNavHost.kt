@@ -22,9 +22,14 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.window.layout.DisplayFeature
 import androidx.window.layout.FoldingFeature
 import com.arb.app.photoeffect.R
+import com.arb.app.photoeffect.ui.screen.effect.ChooseEffectScreen
+import com.arb.app.photoeffect.ui.screen.effect.UploadPhotoScreen
 import com.arb.app.photoeffect.ui.screen.home.HomeScreen
+import com.arb.app.photoeffect.ui.screen.effect.MagicAvatarScreen
+import com.arb.app.photoeffect.ui.screen.intro.GenderSelectionScreen
 import com.arb.app.photoeffect.ui.screen.intro.SplashScreen
 import com.arb.app.photoeffect.ui.screen.profile.SettingScreen
+import com.arb.app.photoeffect.ui.screen.effect.StyleSelectionScreen
 import com.arb.app.photoeffect.util.DevicePosture
 import com.arb.app.photoeffect.util.PhotoNavigationType
 import com.arb.app.photoeffect.util.isBookPosture
@@ -74,13 +79,13 @@ fun PhotoNavigation(
         BottomNavigationItem(
             Screen.HomeScreen.route,
             R.drawable.home_ic,
-            ),
-        BottomNavigationItem(
-            Screen.SettingScreen.route,
-            R.drawable.timer_ic,
         ),
         BottomNavigationItem(
-            Screen.LoginScreen.route,
+            Screen.MagicScreen.route,
+            R.drawable.magic_wand,
+        ),
+        BottomNavigationItem(
+            Screen.MagicScreen.route,
             android.R.drawable.ic_menu_add,
         ),
         BottomNavigationItem(
@@ -90,7 +95,7 @@ fun PhotoNavigation(
         BottomNavigationItem(
             Screen.SettingScreen.route,
             R.drawable.settings_ic,
-            ),
+        ),
     )
 
     PhotoNavigationWrapper(
@@ -186,6 +191,41 @@ fun PhotoNavHost(
             exitTransition = { ExitTransition.None }
         ) {
             SettingScreen(navController)
+        }
+        composable(
+            route = Screen.ChooseEffectScreen.route,
+            enterTransition = { EnterTransition.None },
+            exitTransition = { ExitTransition.None }
+        ) {
+            ChooseEffectScreen(navController)
+        }
+        composable(
+            route = Screen.GenderSelectionScreen.route,
+            enterTransition = { EnterTransition.None },
+            exitTransition = { ExitTransition.None }
+        ) {
+            GenderSelectionScreen(navController)
+        }
+        composable(
+            route = Screen.UploadPhotoScreen.route,
+            enterTransition = { EnterTransition.None },
+            exitTransition = { ExitTransition.None }
+        ) {
+            UploadPhotoScreen(navController)
+        }
+        composable(
+            route = Screen.StyleSelectionScreen.route,
+            enterTransition = { EnterTransition.None },
+            exitTransition = { ExitTransition.None }
+        ) {
+            StyleSelectionScreen(navController)
+        }
+        composable(
+            route = Screen.MagicScreen.route,
+            enterTransition = { EnterTransition.None },
+            exitTransition = { ExitTransition.None }
+        ) {
+            MagicAvatarScreen(navController)
         }
     }
 }
