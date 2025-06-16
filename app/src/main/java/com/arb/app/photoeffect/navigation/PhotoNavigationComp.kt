@@ -22,6 +22,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.arb.app.photoeffect.R
 import com.arb.app.photoeffect.ui.theme.DarkBlue
+import com.arb.app.photoeffect.ui.theme.lightBlue
 
 @Composable
 fun PhotoBottomNavigationBar(
@@ -37,7 +38,7 @@ fun PhotoBottomNavigationBar(
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter),
-            containerColor = Color.DarkGray,
+            containerColor =lightBlue,
             contentColor = Color.White
         ) {
             bottomMenuList.forEach { photoBottomDestination ->
