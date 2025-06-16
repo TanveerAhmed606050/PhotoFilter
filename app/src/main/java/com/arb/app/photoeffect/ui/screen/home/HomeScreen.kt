@@ -50,7 +50,7 @@ fun HomeScreen(navController: NavController) {
 @Composable
 fun HomeScreenUI() {
     Column(
-        modifier = Modifier
+        modifier = Modifier.padding(bottom = 70.dp)
             .fillMaxSize()
             .background(
                 Brush.verticalGradient(
@@ -66,7 +66,7 @@ fun HomeScreenUI() {
         Spacer(modifier = Modifier.statusBarsPadding())
         Header()
         CardWithImageAndText(
-            imageRes = R.drawable.ic_launcher_background,
+            imageRes = R.drawable.enhance_photo,
             title = "Enhance Photo",
             buttonText = stringResource(id = R.string.go)
         )
@@ -78,13 +78,13 @@ fun HomeScreenUI() {
         ) {
             SmallFeatureCard(
                 "Remove Scratch",
-                R.drawable.ic_launcher_background,
+                R.drawable.remove_scratch,
                 modifier = Modifier.weight(1f),
                 showArrow = true,
             )
             SmallFeatureCard(
                 "Colorize",
-                R.drawable.ic_launcher_background,
+                R.drawable.colourize,
                 showArrow = true,
                 modifier = Modifier.weight(1f)
             )
@@ -102,12 +102,12 @@ fun HomeScreenUI() {
                 modifier = Modifier.weight(1f)
             )
             PhotoCard(
-                title = "Cartoonize",
+                title = "Style Transfer",
                 imageUrl = "",
                 modifier = Modifier.weight(1f)
             )
             PhotoCard(
-                title = "Cartoonize",
+                title = "Edit",
                 imageUrl = "",
                 modifier = Modifier.weight(1f)
             )
@@ -121,13 +121,13 @@ fun HomeScreenUI() {
         ) {
             SmallFeatureCard(
                 "Portrait Cutout",
-                R.drawable.ic_launcher_background,
+                R.drawable.potrait_cutout,
                 showArrow = true,
                 modifier = Modifier.weight(1f)
             )
             SmallFeatureCard(
                 "Art Filter",
-                R.drawable.ic_launcher_background,
+                R.drawable.art_filter,
                 showArrow = true,
                 modifier = Modifier.weight(1f)
             )
@@ -156,8 +156,8 @@ fun PhotoCard(
             contentDescription = title,
             contentScale = ContentScale.Crop,
             modifier = Modifier.matchParentSize(),
-            error = painterResource(id = R.drawable.ic_launcher_background),
-            placeholder = painterResource(id = R.drawable.ic_launcher_background)
+            error = painterResource(id = R.drawable.cartonize),
+            placeholder = painterResource(id = R.drawable.cartonize)
         )
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -169,8 +169,8 @@ fun PhotoCard(
             Text(
                 text = title,
                 color = Color.White,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Normal,
                 modifier = Modifier.padding(bottom = 4.dp)
             )
         }
@@ -207,7 +207,7 @@ fun CardWithImageAndText(
                 .padding(16.dp)
         ) {
             Text(
-                title, color = Color.White, fontSize = 16.sp,
+                title, color = Color.White, fontSize = 12.sp,
                 fontFamily = RegularFont
             )
         }
@@ -255,7 +255,7 @@ fun SmallFeatureCard(
             Text(
                 text = title,
                 color = Color.White,
-                fontSize = 16.sp,
+                fontSize = 12.sp,
                 textAlign = TextAlign.Start,
                 fontFamily = RegularFont,
                 modifier = Modifier.weight(1f),

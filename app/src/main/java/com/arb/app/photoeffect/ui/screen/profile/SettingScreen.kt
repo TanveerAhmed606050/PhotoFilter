@@ -1,6 +1,7 @@
 package com.arb.app.photoeffect.ui.screen.profile
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -53,14 +54,18 @@ fun SettingScreenUI() {
         Spacer(modifier = Modifier.statusBarsPadding())
         Header()
         Spacer(modifier = Modifier.height(20.dp))
-        Box(modifier = Modifier.background(Color.Black, shape = RoundedCornerShape(12.dp))) {
+        Box(modifier = Modifier
+            .border(1.dp, Color.White, RoundedCornerShape(12.dp))
+            .background(Color.Transparent, shape = RoundedCornerShape(12.dp))) {
             SettingSimpleRow(
                 stringResource(id = R.string.upgrade_pro), R.drawable.pro_plan,
                 color = Color.Yellow
             )
         }
         Spacer(modifier = Modifier.height(20.dp))
-        Column(modifier = Modifier.background(Color.Black, shape = RoundedCornerShape(12.dp))) {
+        Column(modifier =
+            Modifier.border(1.dp, Color.White, RoundedCornerShape(12.dp))
+            .background(Color.Transparent, shape = RoundedCornerShape(12.dp))) {
             SettingSimpleRow(
                 stringResource(id = R.string.remove_ads), R.drawable.remove_ads
             )
