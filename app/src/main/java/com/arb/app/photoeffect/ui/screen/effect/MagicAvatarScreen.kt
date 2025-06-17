@@ -47,7 +47,7 @@ fun MagicAvatarScreen(navController: NavController) {
 fun MagicAvatarsScreen(createBtnClick: () -> Unit) {
     Box(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxSize().padding(bottom = 40.dp)
             .background(
                 Brush.verticalGradient(
                     colors = listOf(

@@ -55,7 +55,7 @@ fun UploadPhotoUI(
 ) {
     Box(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxSize().padding(bottom = 40.dp)
             .background(
                 Brush.verticalGradient(
                     colors = listOf(
@@ -67,6 +67,12 @@ fun UploadPhotoUI(
             .padding(16.dp)
             .verticalScroll(rememberScrollState()),
     ) {
+        WhiteAppButton(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(vertical = 20.dp, horizontal = 16.dp),
+            buttonText = "Upload 8-12 Photos",
+            onButtonClick = {})
         Column(
             modifier = Modifier.align(Alignment.TopStart)
         ) {

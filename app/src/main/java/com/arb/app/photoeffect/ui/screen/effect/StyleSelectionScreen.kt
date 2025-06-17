@@ -68,7 +68,7 @@ fun StyleSelectionUI(
             .padding(16.dp),
     ) {
         Column(
-            modifier = Modifier.align(Alignment.TopStart)
+            modifier = Modifier.align(Alignment.TopStart).padding(bottom = 80.dp)
         ) {
             Spacer(modifier = Modifier.statusBarsPadding())
             Icon(
@@ -85,7 +85,7 @@ fun StyleSelectionUI(
                 text = stringResource(id = R.string.select_style),
                 color = DarkBlue,
                 fontFamily = BoldFont,
-                fontSize = 28.sp
+                fontSize = 16.sp
             )
             Spacer(modifier = Modifier.height(20.dp))
             GridLayout(effectList = styleList, gridCell = 2)

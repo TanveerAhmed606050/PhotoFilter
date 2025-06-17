@@ -72,7 +72,7 @@ fun ChooseEffectUI(
 ) {
     Box(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxSize().padding(bottom = 40.dp)
             .background(
                 Brush.verticalGradient(
                     colors = listOf(
@@ -112,7 +112,7 @@ fun ChooseEffectUI(
                 text = stringResource(id = R.string.case_effect),
                 color = Color.White,
                 fontFamily = RegularFont,
-                fontSize = 14.sp
+                fontSize = 16.sp
             )
             Spacer(modifier = Modifier.height(12.dp))
             GridLayout(effectList = effectList)

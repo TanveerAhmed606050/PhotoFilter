@@ -37,7 +37,7 @@ fun PhotoBottomNavigationBar(
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter),
-            containerColor = Color.DarkGray,
+            containerColor = DarkBlue,
             contentColor = Color.White
         ) {
             bottomMenuList.forEach { photoBottomDestination ->

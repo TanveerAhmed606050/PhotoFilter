@@ -51,7 +51,7 @@ fun HomeScreen(navController: NavController) {
 fun HomeScreenUI() {
     Column(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxSize().padding(bottom = 50.dp )
             .background(
                 Brush.verticalGradient(
                     colors = listOf(
@@ -67,7 +67,7 @@ fun HomeScreenUI() {
         Header()
         Spacer(modifier = Modifier.height(16.dp))
         CardWithImageAndText(
-            imageRes = R.drawable.enhance_photo_2,
+            imageRes = R.drawable.enhance_photo,
             title = "Enhance Photo",
             buttonText = stringResource(id = R.string.go)
         )
@@ -79,7 +79,7 @@ fun HomeScreenUI() {
         ) {
             SmallFeatureCard(
                 "Remove Scratch",
-                R.drawable.remove_scratch_2,
+                R.drawable.remove_scratch,
                 modifier = Modifier.weight(1f),
                 showArrow = true,
             )
@@ -170,8 +170,8 @@ fun PhotoCard(
             Text(
                 text = title,
                 color = Color.White,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Normal,
                 modifier = Modifier.padding(bottom = 4.dp)
             )
         }
@@ -208,7 +208,7 @@ fun CardWithImageAndText(
                 .padding(16.dp)
         ) {
             Text(
-                title, color = Color.White, fontSize = 16.sp,
+                title, color = Color.White, fontSize = 12.sp,
                 fontFamily = RegularFont
             )
         }
@@ -256,7 +256,7 @@ fun SmallFeatureCard(
             Text(
                 text = title,
                 color = Color.White,
-                fontSize = 16.sp,
+                fontSize = 12.sp,
                 textAlign = TextAlign.Start,
                 fontFamily = RegularFont,
                 modifier = Modifier.weight(1f),
