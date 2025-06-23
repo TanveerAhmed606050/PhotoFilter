@@ -31,6 +31,7 @@ import com.arb.app.photoeffect.ui.screen.home.HomeScreen
 import com.arb.app.photoeffect.ui.screen.intro.GenderSelectionScreen
 import com.arb.app.photoeffect.ui.screen.intro.SplashScreen
 import com.arb.app.photoeffect.ui.screen.plus.ChoosePhotoScreen
+import com.arb.app.photoeffect.ui.screen.plus.CustomGalleryScreen
 import com.arb.app.photoeffect.ui.screen.profile.SettingScreen
 import com.arb.app.photoeffect.util.DevicePosture
 import com.arb.app.photoeffect.util.PhotoNavigationType
@@ -87,7 +88,7 @@ fun PhotoNavigation(
             R.drawable.magic_wand,
         ),
         BottomNavigationItem(
-            Screen.ChoosePhotoScreen.route,
+            Screen.CustomGalleryScreen.route,
             android.R.drawable.ic_menu_add,
         ),
         BottomNavigationItem(
@@ -242,6 +243,13 @@ fun PhotoNavHost(
             exitTransition = { ExitTransition.None }
         ) {
             HistoryScreen(navController)
+        }
+        composable(
+            route = Screen.CustomGalleryScreen.route,
+            enterTransition = { EnterTransition.None },
+            exitTransition = { ExitTransition.None }
+        ) {
+            CustomGalleryScreen(navController)
         }
     }
 }

@@ -64,8 +64,7 @@ fun UploadPhotoUI(
                     )
                 )
             )
-            .padding(16.dp)
-            .verticalScroll(rememberScrollState()),
+            .padding(16.dp),
     ) {
         WhiteAppButton(
             modifier = Modifier
@@ -74,7 +73,9 @@ fun UploadPhotoUI(
             buttonText = "Upload 8-12 Photos",
             onButtonClick = {})
         Column(
-            modifier = Modifier.align(Alignment.TopStart)
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .verticalScroll(rememberScrollState())
         ) {
             Spacer(modifier = Modifier.statusBarsPadding())
             Icon(

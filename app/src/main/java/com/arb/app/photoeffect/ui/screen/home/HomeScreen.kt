@@ -44,11 +44,13 @@ import com.arb.app.photoeffect.ui.theme.RegularFont
 
 @Composable
 fun HomeScreen(navController: NavController) {
-    HomeScreenUI()
+    HomeScreenUI(onPhotoClick = {})
 }
 
 @Composable
-fun HomeScreenUI() {
+fun HomeScreenUI(
+    onPhotoClick: (String) -> Unit,
+) {
     Column(
         modifier = Modifier
             .fillMaxSize().padding(bottom = 50.dp )
@@ -69,7 +71,8 @@ fun HomeScreenUI() {
         CardWithImageAndText(
             imageRes = R.drawable.enhance_photo,
             title = "Enhance Photo",
-            buttonText = stringResource(id = R.string.go)
+            buttonText = stringResource(id = R.string.go),
+            onPhotoClick = { onPhotoClick(it) }
         )
         Spacer(modifier = Modifier.height(24.dp))
         Row(
@@ -82,12 +85,14 @@ fun HomeScreenUI() {
                 R.drawable.remove_scratch,
                 modifier = Modifier.weight(1f),
                 showArrow = true,
+                onPhotoClick = { onPhotoClick(it) }
             )
             SmallFeatureCard(
                 "Colorize",
                 R.drawable.colourize,
                 showArrow = true,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                onPhotoClick = { onPhotoClick(it) }
             )
 
         }
@@ -100,17 +105,20 @@ fun HomeScreenUI() {
             PhotoCard(
                 title = "Cartoonize",
                 imageUrl = R.drawable.cartonize,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                onPhotoClick = { onPhotoClick(it) }
             )
             PhotoCard(
                 title = "Style Transfer",
                 imageUrl = R.drawable.style_transfer,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                onPhotoClick = { onPhotoClick(it) }
             )
             PhotoCard(
                 title = "Edit",
                 imageUrl = R.drawable.edit,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                onPhotoClick = { onPhotoClick(it) }
             )
         }
 
@@ -126,13 +134,15 @@ fun HomeScreenUI() {
                 "Portrait Cutout",
                 R.drawable.potrait_cutout,
                 showArrow = true,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                onPhotoClick = { onPhotoClick(it) }
             )
             SmallFeatureCard(
                 "Art Filter",
                 R.drawable.art_filter,
                 showArrow = true,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                onPhotoClick = { onPhotoClick(it) }
             )
         }
 
@@ -143,13 +153,14 @@ fun HomeScreenUI() {
 fun PhotoCard(
     title: String,
     imageUrl: Int,
-    onClick: () -> Unit = {},
+    onPhotoClick: (String) -> Unit,
     modifier: Modifier
 ) {
 
     Box(
         modifier = modifier
             .height(200.dp)
+            .clickable { onPhotoClick(title) }
             .clip(RoundedCornerShape(16.dp))
     ) {
         AsyncImage(
@@ -182,12 +193,14 @@ fun PhotoCard(
 fun CardWithImageAndText(
     imageRes: Int,
     title: String,
-    buttonText: String
+    buttonText: String,
+    onPhotoClick: (String) -> Unit,
 ) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(200.dp)
+            .height(300.dp)
+            .clickable { onPhotoClick(title) }
             .clip(RoundedCornerShape(12.dp))
             .background(Color.DarkGray)
     ) {
@@ -196,11 +209,6 @@ fun CardWithImageAndText(
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier.matchParentSize()
-        )
-        Box(
-            modifier = Modifier
-                .matchParentSize()
-                .background(Color.Black.copy(alpha = 0.3f))
         )
         Column(
             modifier = Modifier
@@ -227,11 +235,13 @@ fun CardWithImageAndText(
 @Composable
 fun SmallFeatureCard(
     title: String, imageRes: Int, modifier: Modifier = Modifier,
-    showArrow: Boolean = false
+    showArrow: Boolean = false,
+    onPhotoClick: (String) -> Unit,
 ) {
     Box(
         modifier = modifier
             .aspectRatio(1f)
+            .clickable { onPhotoClick(title) }
             .clip(RoundedCornerShape(12.dp))
             .background(Color.DarkGray)
     ) {
@@ -240,11 +250,6 @@ fun SmallFeatureCard(
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier.matchParentSize()
-        )
-        Box(
-            modifier = Modifier
-                .matchParentSize()
-                .background(Color.Black.copy(alpha = 0.3f))
         )
         Row(
             modifier = Modifier
@@ -282,11 +287,10 @@ fun SmallFeatureCard(
     }
 }
 
-
 @Preview
 @Composable
 fun HomeScreenPreview() {
     PhotoEffectTheme {
-        HomeScreenUI()
+        HomeScreenUI(onPhotoClick = {})
     }
 }
