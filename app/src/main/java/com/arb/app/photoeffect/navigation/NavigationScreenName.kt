@@ -13,9 +13,10 @@ sealed class Screen(val route: String) {
     data object UploadPhotoScreen : Screen("uploadPhotoScreen")
     data object StyleSelectionScreen : Screen("styleSelectionScreen")
     data object MagicScreen : Screen("magicScreen")
-    data object ChoosePhotoScreen : Screen("choosePhotoScreen")
+    data object PhotoFilterScreen : Screen("PhotoFilterScreen")
     data object HistoryScreen : Screen("historyScreen")
     data object CustomGalleryScreen : Screen("customGalleryScreen")
+    data object ViewImageScreen : Screen("ViewImageScreen")
 }
 
 class PSRNavigationActions(private val navController: NavHostController) {

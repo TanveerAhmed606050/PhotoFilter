@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -46,9 +47,10 @@ import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.arb.app.photoeffect.navigation.Screen
 import java.io.File
+import java.net.URLEncoder
 
 @Composable
-fun CustomGalleryScreen(navController: NavController) {
+fun CustomGalleryScreen(navController: NavController, effectType: String?) {
     val context = LocalContext.current
     val imageUris = remember { mutableStateListOf<Uri>() }
     val cameraImageUri = remember { mutableStateOf<Uri?>(null) }
@@ -104,8 +106,29 @@ fun CustomGalleryScreen(navController: NavController) {
         }
     }
 
-    CustomGalleryContent(imageUris = imageUris, onImageSelected = {
-        navController.navigate(Screen.ChoosePhotoScreen.route)
+    CustomGalleryContent(imageUris = imageUris, onImageSelected = { imageUri ->
+        val imageUriString = imageUri.toString()
+        Log.d("lsdjg", "HomeScreen: $effectType")
+        if (effectType?.isNotEmpty() == true) {
+            navController.navigate(
+                Screen.PhotoFilterScreen.route + "imageUrl/${
+                    URLEncoder.encode(
+                        imageUriString,
+                        "utf-8"
+                    )
+                }/$effectType"
+            )
+        } else {
+
+            navController.navigate(
+                Screen.ViewImageScreen.route + "data/${
+                    URLEncoder.encode(
+                        imageUriString,
+                        "utf-8"
+                    )
+                }"
+            )
+        }
     },
         onBackBtn = { navController.popBackStack() },
         onCameraClick = {

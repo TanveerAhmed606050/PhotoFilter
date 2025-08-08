@@ -1,5 +1,6 @@
 package com.arb.app.photoeffect.ui.screen.home
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -38,13 +39,16 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.arb.app.photoeffect.R
+import com.arb.app.photoeffect.navigation.Screen
 import com.arb.app.photoeffect.ui.commonViews.Header
 import com.arb.app.photoeffect.ui.theme.PhotoEffectTheme
 import com.arb.app.photoeffect.ui.theme.RegularFont
 
 @Composable
 fun HomeScreen(navController: NavController) {
-    HomeScreenUI(onPhotoClick = {})
+    HomeScreenUI(onPhotoClick = { effect ->
+        navController.navigate(Screen.CustomGalleryScreen.route + "?data/$effect")
+    })
 }
 
 @Composable
@@ -53,7 +57,8 @@ fun HomeScreenUI(
 ) {
     Column(
         modifier = Modifier
-            .fillMaxSize().padding(bottom = 50.dp )
+            .fillMaxSize()
+            .padding(bottom = 50.dp)
             .background(
                 Brush.verticalGradient(
                     colors = listOf(

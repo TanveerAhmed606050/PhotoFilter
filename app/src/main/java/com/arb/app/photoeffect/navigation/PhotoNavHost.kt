@@ -3,8 +3,8 @@ package com.arb.app.photoeffect.navigation
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -15,23 +15,28 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.navArgument
 import androidx.window.layout.DisplayFeature
 import androidx.window.layout.FoldingFeature
 import com.arb.app.photoeffect.R
 import com.arb.app.photoeffect.ui.screen.effect.ChooseEffectScreen
 import com.arb.app.photoeffect.ui.screen.effect.MagicAvatarScreen
+import com.arb.app.photoeffect.ui.screen.effect.PhotoFilterScreen
 import com.arb.app.photoeffect.ui.screen.effect.StyleSelectionScreen
 import com.arb.app.photoeffect.ui.screen.effect.UploadPhotoScreen
 import com.arb.app.photoeffect.ui.screen.history.HistoryScreen
 import com.arb.app.photoeffect.ui.screen.home.HomeScreen
 import com.arb.app.photoeffect.ui.screen.intro.GenderSelectionScreen
 import com.arb.app.photoeffect.ui.screen.intro.SplashScreen
-import com.arb.app.photoeffect.ui.screen.plus.ChoosePhotoScreen
 import com.arb.app.photoeffect.ui.screen.plus.CustomGalleryScreen
+import com.arb.app.photoeffect.ui.screen.plus.PhotoVM
+import com.arb.app.photoeffect.ui.screen.plus.ViewImageScreen
 import com.arb.app.photoeffect.ui.screen.profile.SettingScreen
 import com.arb.app.photoeffect.util.DevicePosture
 import com.arb.app.photoeffect.util.PhotoNavigationType
@@ -173,83 +178,130 @@ fun PhotoNavHost(
     navController: NavHostController,
     modifier: Modifier
 ) {
+    val photoVM: PhotoVM = hiltViewModel()
     NavHost(navController, startDestination = Screen.SplashScreen.route) {
         composable(
             route = Screen.SplashScreen.route,
-            enterTransition = { EnterTransition.None },
-            exitTransition = { ExitTransition.None }
+            enterTransition = { slideInHorizontally { it } },
+            exitTransition = { slideOutHorizontally { -it } },
+            popEnterTransition = { slideInHorizontally { -it } },
+            popExitTransition = { slideOutHorizontally { it } }
         ) {
             SplashScreen(navController)
         }
         composable(
             route = Screen.HomeScreen.route,
-            enterTransition = { EnterTransition.None },
-            exitTransition = { ExitTransition.None }
+            enterTransition = { slideInHorizontally { it } },
+            exitTransition = { slideOutHorizontally { -it } },
+            popEnterTransition = { slideInHorizontally { -it } },
+            popExitTransition = { slideOutHorizontally { it } }
         ) {
             HomeScreen(navController)
         }
         composable(
             route = Screen.SettingScreen.route,
-            enterTransition = { EnterTransition.None },
-            exitTransition = { ExitTransition.None }
+            enterTransition = { slideInHorizontally { it } },
+            exitTransition = { slideOutHorizontally { -it } },
+            popEnterTransition = { slideInHorizontally { -it } },
+            popExitTransition = { slideOutHorizontally { it } }
         ) {
             SettingScreen(navController)
         }
         composable(
             route = Screen.ChooseEffectScreen.route,
-            enterTransition = { EnterTransition.None },
-            exitTransition = { ExitTransition.None }
+            enterTransition = { slideInHorizontally { it } },
+            exitTransition = { slideOutHorizontally { -it } },
+            popEnterTransition = { slideInHorizontally { -it } },
+            popExitTransition = { slideOutHorizontally { it } }
         ) {
             ChooseEffectScreen(navController)
         }
         composable(
             route = Screen.GenderSelectionScreen.route,
-            enterTransition = { EnterTransition.None },
-            exitTransition = { ExitTransition.None }
+            enterTransition = { slideInHorizontally { it } },
+            exitTransition = { slideOutHorizontally { -it } },
+            popEnterTransition = { slideInHorizontally { -it } },
+            popExitTransition = { slideOutHorizontally { it } }
         ) {
             GenderSelectionScreen(navController)
         }
         composable(
             route = Screen.UploadPhotoScreen.route,
-            enterTransition = { EnterTransition.None },
-            exitTransition = { ExitTransition.None }
+            enterTransition = { slideInHorizontally { it } },
+            exitTransition = { slideOutHorizontally { -it } },
+            popEnterTransition = { slideInHorizontally { -it } },
+            popExitTransition = { slideOutHorizontally { it } }
         ) {
             UploadPhotoScreen(navController)
         }
         composable(
             route = Screen.StyleSelectionScreen.route,
-            enterTransition = { EnterTransition.None },
-            exitTransition = { ExitTransition.None }
+            enterTransition = { slideInHorizontally { it } },
+            exitTransition = { slideOutHorizontally { -it } },
+            popEnterTransition = { slideInHorizontally { -it } },
+            popExitTransition = { slideOutHorizontally { it } }
         ) {
             StyleSelectionScreen(navController)
         }
         composable(
             route = Screen.MagicScreen.route,
-            enterTransition = { EnterTransition.None },
-            exitTransition = { ExitTransition.None }
+            enterTransition = { slideInHorizontally { it } },
+            exitTransition = { slideOutHorizontally { -it } },
+            popEnterTransition = { slideInHorizontally { -it } },
+            popExitTransition = { slideOutHorizontally { it } }
         ) {
             MagicAvatarScreen(navController)
         }
         composable(
-            route = Screen.ChoosePhotoScreen.route,
-            enterTransition = { EnterTransition.None },
-            exitTransition = { ExitTransition.None }
-        ) {
-            ChoosePhotoScreen(navController)
+            route = Screen.PhotoFilterScreen.route + "imageUrl/{data}/{effectType}",
+            arguments = listOf(navArgument("data") { type = NavType.StringType },
+                navArgument("effectType") { type = NavType.StringType }
+            ),
+            enterTransition = { slideInHorizontally { it } },
+            exitTransition = { slideOutHorizontally { -it } },
+            popEnterTransition = { slideInHorizontally { -it } },
+            popExitTransition = { slideOutHorizontally { it } }
+        ) { backStackEntry ->
+            val url = backStackEntry.arguments?.getString("data")
+            val effectType = backStackEntry.arguments?.getString("effectType") ?: ""
+            if (url != null) {
+                PhotoFilterScreen(navController, photoVM = photoVM, url, effectType)
+            }
         }
         composable(
             route = Screen.HistoryScreen.route,
-            enterTransition = { EnterTransition.None },
-            exitTransition = { ExitTransition.None }
+            enterTransition = { slideInHorizontally { it } },
+            exitTransition = { slideOutHorizontally { -it } },
+            popEnterTransition = { slideInHorizontally { -it } },
+            popExitTransition = { slideOutHorizontally { it } }
         ) {
             HistoryScreen(navController)
         }
         composable(
-            route = Screen.CustomGalleryScreen.route,
-            enterTransition = { EnterTransition.None },
-            exitTransition = { ExitTransition.None }
-        ) {
-            CustomGalleryScreen(navController)
+            route = Screen.CustomGalleryScreen.route + "?data/{effectType}",
+            arguments = listOf(navArgument("effectType") {
+                type = NavType.StringType
+                defaultValue = ""
+                nullable = true
+            }),
+            enterTransition = { slideInHorizontally { it } },
+            exitTransition = { slideOutHorizontally { -it } },
+            popEnterTransition = { slideInHorizontally { -it } },
+            popExitTransition = { slideOutHorizontally { it } }
+        ) { backStackEntry ->
+            val effectType = backStackEntry.arguments?.getString("effectType")
+            CustomGalleryScreen(navController, effectType)
+        }
+        composable(
+            route = Screen.ViewImageScreen.route + "data/{imageUrl}",
+            arguments = listOf(navArgument("imageUrl") { type = NavType.StringType }),
+            enterTransition = { slideInHorizontally { it } },
+            exitTransition = { slideOutHorizontally { -it } },
+            popEnterTransition = { slideInHorizontally { -it } },
+            popExitTransition = { slideOutHorizontally { it } }
+        ) { backStackEntry ->
+            val imageUri = backStackEntry.arguments?.getString("imageUrl") ?: ""
+            ViewImageScreen(navController, imageUri)
         }
     }
 }
