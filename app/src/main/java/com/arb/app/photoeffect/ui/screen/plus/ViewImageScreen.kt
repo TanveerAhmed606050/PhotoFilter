@@ -36,7 +36,6 @@ import java.net.URLEncoder
 
 @Composable
 fun ViewImageScreen(navController: NavController, imageUri: String) {
-    val context = LocalContext.current
     val decodedUri = remember { Uri.parse(URLDecoder.decode(imageUri, "utf-8")) }
     ViewImageUI(imageUrl = decodedUri,
         onFilterClick = { effect ->

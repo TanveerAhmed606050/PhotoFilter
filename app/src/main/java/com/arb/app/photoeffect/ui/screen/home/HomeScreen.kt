@@ -114,13 +114,13 @@ fun HomeScreenUI(
                 onPhotoClick = { onPhotoClick(it) }
             )
             PhotoCard(
-                title = "Style Transfer",
+                title = "Solid Bg",
                 imageUrl = R.drawable.style_transfer,
                 modifier = Modifier.weight(1f),
                 onPhotoClick = { onPhotoClick(it) }
             )
             PhotoCard(
-                title = "Edit",
+                title = "Gradient Bg",
                 imageUrl = R.drawable.edit,
                 modifier = Modifier.weight(1f),
                 onPhotoClick = { onPhotoClick(it) }

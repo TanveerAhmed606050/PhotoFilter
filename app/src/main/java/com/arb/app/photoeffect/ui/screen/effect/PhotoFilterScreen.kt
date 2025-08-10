@@ -1,11 +1,7 @@
 package com.arb.app.photoeffect.ui.screen.effect
 
-import android.Manifest
-import android.content.Context
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
-import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -35,12 +31,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.arb.app.photoeffect.R
 import com.arb.app.photoeffect.ui.commonViews.LoadingOverlay
 import com.arb.app.photoeffect.ui.screen.plus.PhotoVM
 import com.arb.app.photoeffect.ui.theme.PhotoEffectTheme
@@ -57,7 +54,12 @@ fun PhotoFilterScreen(
     val isLoading = photoVM.isLoading
     val decodedUri = remember { Uri.parse(URLDecoder.decode(imageUri, "utf-8")) }
     LaunchedEffect(Unit) {
-        photoVM.upload(context = context, decodedUri, effect)
+        if (effect == "Solid Bg")
+            photoVM.solidBgApi(context, decodedUri, "44,110,73")
+        else if (effect == "Gradient Bg")
+            photoVM.gradientBgApi(context, decodedUri, "44,110,73", "255,255,255")
+        else
+            photoVM.upload(context = context, decodedUri, effect)
     }
     PhotoFilterUI(isLoading = isLoading, decodedUri, imageBitmap)
 }
@@ -99,6 +101,7 @@ fun PhotoFilterUI(
             AsyncImage(
                 model = imageUrl,
                 contentDescription = "Right Image",
+                placeholder = painterResource(id = R.drawable.ic_launcher_foreground),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
             )
@@ -126,7 +129,8 @@ fun PhotoFilterUI(
                             }
                         }
                 )
-            } ?: Text("")
+            } ?: Text(text = "Uploading")
+
 
             Box(
                 modifier = Modifier
@@ -143,31 +147,6 @@ fun PhotoFilterUI(
                 )
             }
         }
-//        Box(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .height(50.dp)
-//                .background(color = Color.Black)
-//                .align(Alignment.BottomCenter),
-//            contentAlignment = Alignment.Center
-//        ) {
-//            LazyRow(
-//                modifier = Modifier.fillMaxWidth(),
-//                verticalAlignment = Alignment.CenterVertically,
-//                horizontalArrangement = Arrangement.spacedBy(6.dp)
-//            ) {
-//                items(filterList.size) { index ->
-//                    Text(
-//                        text = filterList[index], fontSize = 14.sp, color = Color.Black,
-//                        modifier = Modifier
-//                            .background(Color.White, shape = RoundedCornerShape(12.dp))
-//                            .padding(horizontal = 12.dp),
-//                        textAlign = TextAlign.Center,
-//                        fontFamily = BoldFont
-//                    )
-//                }
-//            }
-//        }
         Box(
             modifier = Modifier
                 .align(Alignment.Center)
@@ -175,22 +154,6 @@ fun PhotoFilterUI(
             LoadingOverlay(isLoading)
         }
 
-    }
-}
-
-fun openGallery(
-    context: Context,
-    galleryLauncher: ManagedActivityResultLauncher<String, Uri?>,
-    permissionLauncher: ManagedActivityResultLauncher<String, Uri?>
-) {
-    val permissionCheckResult = ContextCompat.checkSelfPermission(
-        context, Manifest.permission.READ_EXTERNAL_STORAGE
-    )
-    if (permissionCheckResult == PackageManager.PERMISSION_GRANTED) {
-        galleryLauncher.launch("image/*")
-    } else {
-        // Request a permission
-        permissionLauncher.launch("image/*")
     }
 }
 
