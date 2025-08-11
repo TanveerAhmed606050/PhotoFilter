@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.arb.app.photoeffect.ui.theme.DarkBlue
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.roundToInt
@@ -34,7 +35,7 @@ fun LoadingOverlay(isVisible: Boolean) {
         Box(
             Modifier
                 .wrapContentSize()
-                .background(Color.Black.copy(alpha = 0.2f), shape = RoundedCornerShape(12.dp))
+                .background(Color.Black.copy(alpha = 0.7f), shape = RoundedCornerShape(12.dp))
                 .padding(30.dp),
             contentAlignment = Alignment.Center,
         ) {
@@ -78,7 +79,7 @@ fun CustomProgressIndicator(
                         .size(dotSize)
                         .alpha(alpha)
                         .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primary)
+                        .background(DarkBlue)
                 )
             }
         }

@@ -2,17 +2,21 @@ package com.arb.app.photoeffect.ui.commonViews
 
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -24,9 +28,12 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -37,6 +44,8 @@ import com.arb.app.photoeffect.R
 import com.arb.app.photoeffect.ui.theme.AppBG
 import com.arb.app.photoeffect.ui.theme.BoldFont
 import com.arb.app.photoeffect.ui.theme.DarkBlue
+import com.arb.app.photoeffect.ui.theme.LightGreen40
+import com.arb.app.photoeffect.ui.theme.LightRed40
 import com.arb.app.photoeffect.ui.theme.RegularFont
 
 @Composable
@@ -135,4 +144,43 @@ fun LogoutDialog(
             }
         }
     }
+}
+@Composable
+fun InfoMsgDialog(
+    status: Boolean,
+    msg: String,
+    cancelBtnClick: () -> Unit
+) {
+    val textColor = if (status) LightGreen40 else LightRed40
+    AlertDialog(
+        onDismissRequest = {  },
+        text = {
+            Column(
+                modifier = Modifier.padding(horizontal = 4.dp),
+                horizontalAlignment = CenterHorizontally
+            ) {
+                Image(
+                    painter = painterResource(id = if (status) R.drawable.green_eco_loop_leaf_check_mark else android.R.drawable.stat_notify_error),
+                    contentDescription = "",
+                    colorFilter = ColorFilter.tint(textColor),
+                    modifier = Modifier.size(90.dp)
+                )
+                Spacer(modifier = Modifier.height(20.dp))
+                Text(
+                    text = msg, color = textColor,
+                    textAlign = TextAlign.Center,
+                    fontSize = 16.sp,
+                    modifier = Modifier.fillMaxWidth(),
+                    fontFamily = BoldFont,
+                )
+                Spacer(modifier = Modifier.height(20.dp))
+                WhiteAppButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    buttonText = stringResource(id = R.string.ok),
+                    onButtonClick = { cancelBtnClick() })
+            }
+        },
+        confirmButton = { },
+        containerColor = Color.White
+    )
 }

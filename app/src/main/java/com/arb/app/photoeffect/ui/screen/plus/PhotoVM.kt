@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.arb.app.photoeffect.repository.PhotoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,17 +22,18 @@ class PhotoVM @Inject constructor(
     var error by mutableStateOf("")
     var bitmap by mutableStateOf<Bitmap?>(null)
 
-    fun upload(context: Context, uri: Uri, effect: String) = viewModelScope.launch {
-        isLoading = true
-        try {
-            bitmap = photoRepository.uploadImage(context, uri, effect)
-        } finally {
-            isLoading = false
+    fun filterApi(context: Context, uri: Uri, effect: String) =
+        viewModelScope.launch(Dispatchers.IO) {
+            isLoading = true
+            try {
+                bitmap = photoRepository.filterApi(context, uri, effect)
+            } finally {
+                isLoading = false
+            }
         }
-    }
 
     fun gradientBgApi(context: Context, uri: Uri, color1: String, color2: String) =
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             isLoading = true
             try {
                 bitmap = photoRepository.gradientBgApi(context, uri, color1, color2 = color2)
@@ -40,12 +42,17 @@ class PhotoVM @Inject constructor(
             }
         }
 
-    fun solidBgApi(context: Context, uri: Uri, color1: String) = viewModelScope.launch {
-        isLoading = true
-        try {
-            bitmap = photoRepository.solidBgApi(context, uri, color1)
-        } finally {
-            isLoading = false
+    fun solidBgApi(context: Context, uri: Uri, color1: String) =
+        viewModelScope.launch(Dispatchers.IO) {
+            isLoading = true
+            try {
+                bitmap = photoRepository.solidBgApi(context, uri, color1)
+            } finally {
+                isLoading = false
+            }
         }
+
+    fun resetBitmap() {
+        bitmap = null
     }
 }

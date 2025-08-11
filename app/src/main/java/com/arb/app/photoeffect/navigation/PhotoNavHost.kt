@@ -196,7 +196,7 @@ fun PhotoNavHost(
             popEnterTransition = { slideInHorizontally { -it } },
             popExitTransition = { slideOutHorizontally { it } }
         ) {
-            HomeScreen(navController)
+            HomeScreen(navController, photoVM)
         }
         composable(
             route = Screen.SettingScreen.route,

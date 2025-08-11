@@ -2,6 +2,10 @@ package com.arb.app.photoeffect.ui.screen.effect
 
 import android.graphics.Bitmap
 import android.net.Uri
+import android.net.http.HttpException
+import android.os.Build
+import android.widget.Toast
+import androidx.annotation.RequiresExtension
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -10,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -26,24 +29,31 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.arb.app.photoeffect.R
+import com.arb.app.photoeffect.network.isNetworkAvailable
+import com.arb.app.photoeffect.ui.commonViews.InfoMsgDialog
 import com.arb.app.photoeffect.ui.commonViews.LoadingOverlay
 import com.arb.app.photoeffect.ui.screen.plus.PhotoVM
 import com.arb.app.photoeffect.ui.theme.PhotoEffectTheme
+import java.io.IOException
+import java.net.SocketTimeoutException
 import java.net.URLDecoder
 import kotlin.math.roundToInt
 
+@RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @Composable
 fun PhotoFilterScreen(
     navController: NavController, photoVM: PhotoVM, imageUri: String,
@@ -53,13 +63,46 @@ fun PhotoFilterScreen(
     val imageBitmap = photoVM.bitmap
     val isLoading = photoVM.isLoading
     val decodedUri = remember { Uri.parse(URLDecoder.decode(imageUri, "utf-8")) }
-    LaunchedEffect(Unit) {
-        if (effect == "Solid Bg")
-            photoVM.solidBgApi(context, decodedUri, "44,110,73")
-        else if (effect == "Gradient Bg")
-            photoVM.gradientBgApi(context, decodedUri, "44,110,73", "255,255,255")
-        else
-            photoVM.upload(context = context, decodedUri, effect)
+    var showInfoDialog by remember { mutableStateOf(false) }
+    val connectivityError = stringResource(id = R.string.network_error)
+    if (showInfoDialog) {
+        InfoMsgDialog(status = false,
+            msg = connectivityError,
+            cancelBtnClick = {
+                showInfoDialog = false
+            })
+    }
+    if (isNetworkAvailable(context)) {
+        LaunchedEffect(Unit) {
+            when (effect) {
+                "Solid Bg" -> try {
+                    photoVM.solidBgApi(context, decodedUri, "44,110,73")
+                } catch (e: HttpException) {
+                    // Specific HTTP error
+                    Toast.makeText(context, "Server error: ${e.message}", Toast.LENGTH_SHORT).show()
+                } catch (e: SocketTimeoutException) {
+                    Toast.makeText(context, "Request timed out", Toast.LENGTH_SHORT).show()
+                } catch (e: IOException) {
+                    Toast.makeText(context, "Check your internet connection", Toast.LENGTH_SHORT)
+                        .show()
+                } catch (e: Exception) {
+                    Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
+                } finally {
+                    photoVM.isLoading = false
+                }
+
+                "Gradient Bg" -> photoVM.gradientBgApi(
+                    context,
+                    decodedUri,
+                    "44,110,73",
+                    "255,255,255"
+                )
+
+                else -> photoVM.filterApi(context = context, decodedUri, effect)
+            }
+        }
+    } else {
+        showInfoDialog = true
     }
     PhotoFilterUI(isLoading = isLoading, decodedUri, imageBitmap)
 }
@@ -105,31 +148,33 @@ fun PhotoFilterUI(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
             )
-
-            imageBitmap?.let {
-                Image(
-                    bitmap = it.asImageBitmap(),
-                    contentDescription = "Colorized",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .graphicsLayer {
-                            clip = true
-                            shape = RectangleShape
+            // Overlay either imageBitmap or placeholder on the left part
+            val leftImagePainter = if (imageBitmap != null) {
+                BitmapPainter(imageBitmap.asImageBitmap())
+            } else {
+                painterResource(id = R.drawable.potrait_cutout)
+            }
+            Image(
+                painter = leftImagePainter,
+                contentDescription = "Left Overlay",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .graphicsLayer {
+                        clip = true
+                        shape = RectangleShape
+                    }
+                    .drawWithContent {
+                        clipRect(
+                            left = 0f,
+                            top = 0f,
+                            right = offsetX,
+                            bottom = size.height
+                        ) {
+                            this@drawWithContent.drawContent()
                         }
-                        .drawWithContent {
-                            // Clip manually to offsetX
-                            clipRect(
-                                left = 0f,
-                                top = 0f,
-                                right = offsetX,
-                                bottom = size.height
-                            ) {
-                                this@drawWithContent.drawContent()
-                            }
-                        }
-                )
-            } ?: Text(text = "Uploading")
+                    }
+            )
 
 
             Box(
