@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -22,6 +23,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -202,6 +204,14 @@ fun CardWithImageAndText(
     buttonText: String,
     onPhotoClick: (String) -> Unit,
 ) {
+    val drawable = painterResource(id = imageRes)
+    val aspectRatio = remember(imageRes) {
+        val width = drawable.intrinsicSize.width
+        val height = drawable.intrinsicSize.height
+        if (width > 0 && height > 0) width / height else 1f
+    }
+    val imageAspect = drawable.intrinsicSize.width / drawable.intrinsicSize.height
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -213,8 +223,9 @@ fun CardWithImageAndText(
         Image(
             painter = painterResource(id = imageRes),
             contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.matchParentSize()
+            modifier = Modifier
+                .fillMaxHeight()
+                .aspectRatio(imageAspect), // keep original aspect ratio
         )
         Column(
             modifier = Modifier

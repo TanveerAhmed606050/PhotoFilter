@@ -29,7 +29,6 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -149,47 +148,47 @@ fun PhotoFilterUI(
                 modifier = Modifier.fillMaxSize()
             )
             // Overlay either imageBitmap or placeholder on the left part
-            val leftImagePainter = if (imageBitmap != null) {
-                BitmapPainter(imageBitmap.asImageBitmap())
-            } else {
-                painterResource(id = R.drawable.potrait_cutout)
-            }
-            Image(
-                painter = leftImagePainter,
-                contentDescription = "Left Overlay",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .graphicsLayer {
-                        clip = true
-                        shape = RectangleShape
-                    }
-                    .drawWithContent {
-                        clipRect(
-                            left = 0f,
-                            top = 0f,
-                            right = offsetX,
-                            bottom = size.height
-                        ) {
-                            this@drawWithContent.drawContent()
+//            val leftImagePainter = if (imageBitmap != null) {
+//                BitmapPainter(imageBitmap.asImageBitmap())
+//            } else {
+//                painterResource(id = R.drawable.potrait_cutout)
+//            }
+            imageBitmap?.asImageBitmap()?.let {
+                Image(
+                    bitmap = imageBitmap.asImageBitmap(),
+                    contentDescription = "Left Overlay",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .graphicsLayer {
+                            clip = true
+                            shape = RectangleShape
                         }
-                    }
-            )
-
-
-            Box(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .width(12.dp)
-                    .offset { IntOffset((offsetX - 20).roundToInt(), 0) }
-            ) {
+                        .drawWithContent {
+                            clipRect(
+                                left = 0f,
+                                top = 0f,
+                                right = offsetX,
+                                bottom = size.height
+                            ) {
+                                this@drawWithContent.drawContent()
+                            }
+                        }
+                )
                 Box(
                     modifier = Modifier
                         .fillMaxHeight()
-                        .width(2.dp)
-                        .align(Alignment.Center)
-                        .background(Color.White)
-                )
+                        .width(12.dp)
+                        .offset { IntOffset((offsetX - 20).roundToInt(), 0) }
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .width(2.dp)
+                            .align(Alignment.Center)
+                            .background(Color.White)
+                    )
+                }
             }
         }
         Box(
