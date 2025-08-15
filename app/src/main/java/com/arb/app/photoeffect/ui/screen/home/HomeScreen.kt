@@ -1,5 +1,6 @@
 package com.arb.app.photoeffect.ui.screen.home
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -9,7 +10,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -30,6 +30,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -58,6 +59,7 @@ fun HomeScreen(navController: NavController, photoVM: PhotoVM) {
 fun HomeScreenUI(
     onPhotoClick: (String) -> Unit,
 ) {
+    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -102,7 +104,6 @@ fun HomeScreenUI(
                 modifier = Modifier.weight(1f),
                 onPhotoClick = { onPhotoClick(it) }
             )
-
         }
         Spacer(modifier = Modifier.height(24.dp))
         Row(
@@ -112,19 +113,19 @@ fun HomeScreenUI(
         ) {
             PhotoCard(
                 title = "Cartoonize",
-                imageUrl = R.drawable.cartonize,
+                imageRes = R.drawable.cartonize,
                 modifier = Modifier.weight(1f),
                 onPhotoClick = { onPhotoClick(it) }
             )
             PhotoCard(
                 title = "Solid Bg",
-                imageUrl = R.drawable.style_transfer,
+                imageRes = R.drawable.style_transfer,
                 modifier = Modifier.weight(1f),
                 onPhotoClick = { onPhotoClick(it) }
             )
             PhotoCard(
                 title = "Gradient Bg",
-                imageUrl = R.drawable.edit,
+                imageRes = R.drawable.edit,
                 modifier = Modifier.weight(1f),
                 onPhotoClick = { onPhotoClick(it) }
             )
@@ -150,7 +151,7 @@ fun HomeScreenUI(
                 R.drawable.art_filter,
                 showArrow = true,
                 modifier = Modifier.weight(1f),
-                onPhotoClick = { onPhotoClick(it) }
+                onPhotoClick = { Toast.makeText(context, "Coming soon", Toast.LENGTH_LONG).show() }
             )
         }
 
@@ -160,30 +161,29 @@ fun HomeScreenUI(
 @Composable
 fun PhotoCard(
     title: String,
-    imageUrl: Int,
+    imageRes: Int,
     onPhotoClick: (String) -> Unit,
     modifier: Modifier
 ) {
-
     Box(
         modifier = modifier
             .height(200.dp)
             .clickable { onPhotoClick(title) }
-            .clip(RoundedCornerShape(16.dp))
+            .clip(RoundedCornerShape(12.dp))
     ) {
         AsyncImage(
-            model = imageUrl,
+            model = imageRes,
             contentDescription = title,
             contentScale = ContentScale.Crop,
             modifier = Modifier.matchParentSize(),
-            error = painterResource(id = imageUrl),
-            placeholder = painterResource(id = imageUrl)
+            error = painterResource(id = imageRes),
+            placeholder = painterResource(id = imageRes)
         )
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
-                .padding(8.dp)
-                .align(Alignment.BottomStart),
+                .align(Alignment.BottomCenter)
+                .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
@@ -224,7 +224,7 @@ fun CardWithImageAndText(
             painter = painterResource(id = imageRes),
             contentDescription = null,
             modifier = Modifier
-                .fillMaxHeight()
+                .fillMaxSize()
                 .aspectRatio(imageAspect), // keep original aspect ratio
         )
         Column(

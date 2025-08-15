@@ -1,17 +1,20 @@
 package com.arb.app.photoeffect.ui.screen.plus
 
-import android.content.Context
 import android.graphics.Bitmap
-import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.arb.app.photoeffect.repository.PhotoRepository
+import com.arb.app.photoeffect.ui.screen.effect.models.EnhanceColorizeDto
+import com.arb.app.photoeffect.ui.screen.effect.models.IngredientDto
+import com.arb.app.photoeffect.ui.screen.effect.models.ScratchDto
+import com.arb.app.photoeffect.ui.screen.effect.models.SolidDto
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,31 +25,49 @@ class PhotoVM @Inject constructor(
     var error by mutableStateOf("")
     var bitmap by mutableStateOf<Bitmap?>(null)
 
-    fun filterApi(context: Context, uri: Uri, effect: String) =
+    fun filterApi(enhanceColorizeDto: EnhanceColorizeDto, effect: String) =
         viewModelScope.launch(Dispatchers.IO) {
             isLoading = true
             try {
-                bitmap = photoRepository.filterApi(context, uri, effect)
+                bitmap = photoRepository.filterApi(enhanceColorizeDto, effect)
+            } catch (e: HttpException) {
+                error = if (e.code() == 413) {
+                    "Image too large. Please use a smaller file."
+                } else {
+                    "Server error: ${e.code()}"
+                }
+            } catch (e: Exception) {
+                error = "Something went wrong: ${e.localizedMessage}"
             } finally {
                 isLoading = false
             }
         }
 
-    fun gradientBgApi(context: Context, uri: Uri, color1: String, color2: String) =
+    fun gradientBgApi(ingredientDto: IngredientDto) =
         viewModelScope.launch(Dispatchers.IO) {
             isLoading = true
             try {
-                bitmap = photoRepository.gradientBgApi(context, uri, color1, color2 = color2)
+                bitmap = photoRepository.gradientBgApi(ingredientDto)
             } finally {
                 isLoading = false
             }
         }
 
-    fun solidBgApi(context: Context, uri: Uri, color1: String) =
+    fun removeScratchApi(scratchDto: ScratchDto) =
         viewModelScope.launch(Dispatchers.IO) {
             isLoading = true
             try {
-                bitmap = photoRepository.solidBgApi(context, uri, color1)
+                bitmap = photoRepository.removeScratchApi(scratchDto)
+            } finally {
+                isLoading = false
+            }
+        }
+
+    fun solidBgApi(solidDto: SolidDto) =
+        viewModelScope.launch(Dispatchers.IO) {
+            isLoading = true
+            try {
+                bitmap = photoRepository.solidBgApi(solidDto)
             } finally {
                 isLoading = false
             }

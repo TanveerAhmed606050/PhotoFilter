@@ -19,26 +19,41 @@ interface ApiInterface {
     @Multipart
     @POST("api1/api/cartoonize")
     suspend fun cartoonize(
-        @Part image: MultipartBody.Part
+        @Part file: MultipartBody.Part
+    ): ResponseBody
+
+    @Multipart
+    @POST("api1/api/portrait")
+    suspend fun portrait(
+        @Part file: MultipartBody.Part
     ): ResponseBody
 
     @Multipart
     @POST("api1/api/face_enhance")
     suspend fun enhanceQuality(
-        @Part image: MultipartBody.Part
+        @Part file: MultipartBody.Part
+    ): ResponseBody
+
+    @Multipart
+    @POST("api3/api/restore/")
+    suspend fun removeScratch(
+        @Part file: MultipartBody.Part,
+        @Part("gpu") gpu: RequestBody,
+        @Part("with_scratch") withScratch: RequestBody,
+        @Part("hr") hr: RequestBody
     ): ResponseBody
 
     @Multipart
     @POST("api1/api/solid")
     suspend fun solidBg(
-        @Part image: MultipartBody.Part,
+        @Part file: MultipartBody.Part,
         @Part("color") color: RequestBody
     ): ResponseBody
 
     @Multipart
     @POST("api1/api/gradient")
     suspend fun gradientBg(
-        @Part image: MultipartBody.Part,
+        @Part file: MultipartBody.Part,
         @Part("color1") color1: RequestBody,
         @Part("color2") color2: RequestBody
     ): ResponseBody
@@ -46,7 +61,7 @@ interface ApiInterface {
     @Multipart
     @POST("api2/api/colorize/")
     suspend fun colorizeImage(
-        @Part image: MultipartBody.Part
+        @Part file: MultipartBody.Part
     ): ResponseBody
 }
 

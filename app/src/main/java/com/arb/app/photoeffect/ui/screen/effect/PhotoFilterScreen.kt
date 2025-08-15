@@ -2,9 +2,8 @@ package com.arb.app.photoeffect.ui.screen.effect
 
 import android.graphics.Bitmap
 import android.net.Uri
-import android.net.http.HttpException
 import android.os.Build
-import android.widget.Toast
+import android.util.Log
 import androidx.annotation.RequiresExtension
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -43,12 +42,17 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.arb.app.photoeffect.R
 import com.arb.app.photoeffect.network.isNetworkAvailable
+import com.arb.app.photoeffect.repository.compressImage
 import com.arb.app.photoeffect.ui.commonViews.InfoMsgDialog
 import com.arb.app.photoeffect.ui.commonViews.LoadingOverlay
+import com.arb.app.photoeffect.ui.screen.effect.models.EnhanceColorizeDto
+import com.arb.app.photoeffect.ui.screen.effect.models.IngredientDto
+import com.arb.app.photoeffect.ui.screen.effect.models.ScratchDto
+import com.arb.app.photoeffect.ui.screen.effect.models.SolidDto
 import com.arb.app.photoeffect.ui.screen.plus.PhotoVM
 import com.arb.app.photoeffect.ui.theme.PhotoEffectTheme
-import java.io.IOException
-import java.net.SocketTimeoutException
+import com.arb.app.photoeffect.util.Utils.createMultipartBodyPart
+import com.arb.app.photoeffect.util.Utils.uriToFile
 import java.net.URLDecoder
 import kotlin.math.roundToInt
 
@@ -61,9 +65,14 @@ fun PhotoFilterScreen(
     val context = LocalContext.current
     val imageBitmap = photoVM.bitmap
     val isLoading = photoVM.isLoading
+    val error = photoVM.error
     val decodedUri = remember { Uri.parse(URLDecoder.decode(imageUri, "utf-8")) }
     var showInfoDialog by remember { mutableStateOf(false) }
     val connectivityError = stringResource(id = R.string.network_error)
+    if (error.isNotEmpty()) {
+        showInfoDialog = true
+        photoVM.error = ""
+    }
     if (showInfoDialog) {
         InfoMsgDialog(status = false,
             msg = connectivityError,
@@ -73,31 +82,36 @@ fun PhotoFilterScreen(
     }
     if (isNetworkAvailable(context)) {
         LaunchedEffect(Unit) {
+            val file = uriToFile(context, uri = decodedUri!!)
+            val smallFile = compressImage(file)
+            Log.d(
+                "ImageSize",
+                "Original size: ${file.length()} bytes (${file.length() / 1024} KB)\n" +
+                        "Small size: ${smallFile.length()} bytes (${smallFile.length() / 1024} KB)"
+            )
+            val imagePart = createMultipartBodyPart(smallFile, "file")
             when (effect) {
-                "Solid Bg" -> try {
-                    photoVM.solidBgApi(context, decodedUri, "44,110,73")
-                } catch (e: HttpException) {
-                    // Specific HTTP error
-                    Toast.makeText(context, "Server error: ${e.message}", Toast.LENGTH_SHORT).show()
-                } catch (e: SocketTimeoutException) {
-                    Toast.makeText(context, "Request timed out", Toast.LENGTH_SHORT).show()
-                } catch (e: IOException) {
-                    Toast.makeText(context, "Check your internet connection", Toast.LENGTH_SHORT)
-                        .show()
-                } catch (e: Exception) {
-                    Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
-                } finally {
-                    photoVM.isLoading = false
-                }
+                "Solid Bg" -> photoVM.solidBgApi(SolidDto("44,110,73", imagePart))
+                "Gradient Bg" ->
+                    photoVM.gradientBgApi(
+                        IngredientDto(
+                            color1 = "44,110,73",
+                            color2 = "255,255,255", file = imagePart
+                        )
+                    )
 
-                "Gradient Bg" -> photoVM.gradientBgApi(
-                    context,
-                    decodedUri,
-                    "44,110,73",
-                    "255,255,255"
+                "Remove Scratch" -> photoVM.removeScratchApi(
+                    ScratchDto(
+                        imagePart,
+                        "-1",
+                        false,
+                        false
+                    )
                 )
 
-                else -> photoVM.filterApi(context = context, decodedUri, effect)
+                else -> {
+                    photoVM.filterApi(EnhanceColorizeDto(imagePart), effect)
+                }
             }
         }
     } else {
@@ -143,8 +157,8 @@ fun PhotoFilterUI(
             AsyncImage(
                 model = imageUrl,
                 contentDescription = "Right Image",
-                placeholder = painterResource(id = R.drawable.ic_launcher_foreground),
-                contentScale = ContentScale.Crop,
+                placeholder = painterResource(id = R.drawable.ic_launcher_background),
+                contentScale = ContentScale.Fit,
                 modifier = Modifier.fillMaxSize()
             )
             // Overlay either imageBitmap or placeholder on the left part

@@ -1,14 +1,13 @@
 package com.arb.app.photoeffect.repository
 
-import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.net.Uri
 import com.arb.app.photoeffect.network.ApiInterface
-import okhttp3.MediaType.Companion.toMediaType
+import com.arb.app.photoeffect.ui.screen.effect.models.EnhanceColorizeDto
+import com.arb.app.photoeffect.ui.screen.effect.models.IngredientDto
+import com.arb.app.photoeffect.ui.screen.effect.models.ScratchDto
+import com.arb.app.photoeffect.ui.screen.effect.models.SolidDto
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 import java.io.FileOutputStream
@@ -17,45 +16,44 @@ import javax.inject.Inject
 class PhotoRepository @Inject constructor(
     private val apiInterface: ApiInterface,
 ) : BaseRepository() {
-    suspend fun filterApi(context: Context, uri: Uri, effect: String): Bitmap? {
-        val file = compressImage(context, uri) // compress first
-
-        val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
-        val body = MultipartBody.Part.createFormData("file", file.name, requestFile)
+    suspend fun filterApi(enhanceColorizeDto: EnhanceColorizeDto, effect: String): Bitmap? {
 
         val response = when (effect) {
-            "Enhance Photo" -> apiInterface.enhanceQuality(body)
-            "Remove Scratch" -> apiInterface.enhanceQuality(body)
-            "Colorize" -> apiInterface.colorizeImage(body)
-            else -> apiInterface.cartoonize(body)
+            "Enhance Photo" -> apiInterface.enhanceQuality(enhanceColorizeDto.file)
+            "Colorize" -> apiInterface.colorizeImage(enhanceColorizeDto.file)
+            "Portrait Cutout" -> apiInterface.portrait(enhanceColorizeDto.file)
+            else -> apiInterface.cartoonize(enhanceColorizeDto.file)
         }
         val imageBytes = response.bytes()
         return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
     }
 
-    suspend fun gradientBgApi(context: Context, uri: Uri, color1: String, color2: String): Bitmap? {
-        val file = compressImage(context, uri) // compress first
-
-        val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
-        val body = MultipartBody.Part.createFormData("file", "image.jpg", requestFile)
-        val colorPart1 = color1.toRequestBody("text/plain".toMediaType())
-        val colorPart2 = color2.toRequestBody("text/plain".toMediaType())
-
-        val response = apiInterface.gradientBg(body, colorPart1, colorPart2)
+    suspend fun gradientBgApi(ingredientDto: IngredientDto): Bitmap? {
+        val response = apiInterface.gradientBg(
+            ingredientDto.file,
+            ingredientDto.color1.toRequestBody("text/plain".toMediaTypeOrNull()),
+            ingredientDto.color2.toRequestBody("text/plain".toMediaTypeOrNull())
+        )
         val imageBytes = response.bytes()
         return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
     }
 
-    suspend fun solidBgApi(context: Context, uri: Uri, color1: String): Bitmap? {
-//        val inputStream = context.contentResolver.openInputStream(uri)
-//        val bytes = inputStream?.readBytes() ?: return null
-        val file = compressImage(context, uri) // compress first
+    suspend fun removeScratchApi(scratchDto: ScratchDto): Bitmap? {
+        val response = apiInterface.removeScratch(
+            scratchDto.file,
+            scratchDto.gpu.toRequestBody("text/plain".toMediaTypeOrNull()),
+            scratchDto.withScratch.toString().toRequestBody("text/plain".toMediaTypeOrNull()),
+            scratchDto.hr.toString().toRequestBody("text/plain".toMediaTypeOrNull()),
+        )
+        val imageBytes = response.bytes()
+        return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+    }
 
-        val requestFile = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
-        val body = MultipartBody.Part.createFormData("file", file.name, requestFile)
-        val colorPart1 = color1.toRequestBody("text/plain".toMediaType())
-
-        val response = apiInterface.solidBg(body, colorPart1)
+    suspend fun solidBgApi(solidDto: SolidDto): Bitmap? {
+        val response = apiInterface.solidBg(
+            solidDto.image,
+            solidDto.color.toRequestBody("text/plain".toMediaTypeOrNull())
+        )
 
         val imageBytes = response.bytes()
         return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
@@ -63,25 +61,36 @@ class PhotoRepository @Inject constructor(
 }
 
 fun compressImage(
-    context: Context,
-    uri: Uri,
+    file: File,
     maxWidth: Int = 1080,
     maxHeight: Int = 1080,
-    quality: Int = 80
+    quality: Int = 90
 ): File {
-    val bitmap = BitmapFactory.decodeStream(context.contentResolver.openInputStream(uri))
+    val bitmap = BitmapFactory.decodeFile(file.path)
 
+    // Calculate proportional scaling
     val ratio = minOf(
         maxWidth.toFloat() / bitmap.width,
-        maxHeight.toFloat() / bitmap.height
+        maxHeight.toFloat() / bitmap.height,
+        1f // don't upscale small images
     )
-    val width = (bitmap.width * ratio).toInt()
-    val height = (bitmap.height * ratio).toInt()
-    val scaledBitmap = Bitmap.createScaledBitmap(bitmap, width, height, true)
+    val newWidth = (bitmap.width * ratio).toInt()
+    val newHeight = (bitmap.height * ratio).toInt()
+    val scaledBitmap = Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true)
 
-    val file = File(context.cacheDir, "compressed_image.jpg")
-    FileOutputStream(file).use { out ->
-        scaledBitmap.compress(Bitmap.CompressFormat.JPEG, quality, out)
+    // Detect original format
+    val extension = file.extension.lowercase()
+    val format = when (extension) {
+        "png" -> Bitmap.CompressFormat.PNG // lossless
+        "webp" -> Bitmap.CompressFormat.WEBP
+        else -> Bitmap.CompressFormat.JPEG
     }
-    return file
+
+    // Output file
+    val compressedFile = File(file.parent, "compressed_${file.name}")
+    FileOutputStream(compressedFile).use { out ->
+        scaledBitmap.compress(format, quality, out)
+    }
+
+    return compressedFile
 }

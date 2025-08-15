@@ -1,10 +1,7 @@
 package com.arb.app.photoeffect.util
 
-import android.app.Activity
 import android.content.Context
 import android.net.Uri
-import androidx.core.view.WindowCompat
-import com.arb.app.photoeffect.R
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -54,29 +51,5 @@ object Utils {
         val requestBody =
             file.asRequestBody("image/*".toMediaTypeOrNull()) // Change MIME type as needed
         return MultipartBody.Part.createFormData(name, file.name, requestBody)
-    }
-
-    fun isRtlLocale(locale: Locale): Boolean {
-        val rtlLanguages = listOf("ur") // List of RTL languages
-        return rtlLanguages.contains(locale.language)
-    }
-
-    fun actionBar(context: Activity) {
-        val window = context.window
-        // Set the status bar background color to white
-        window.statusBarColor = context.resources.getColor(R.color.black, context.theme)
-
-        // Change the status bar icons to black for better visibility
-        WindowCompat.getInsetsController(window, window.decorView).apply {
-            isAppearanceLightStatusBars = true
-        }
-    }
-
-    fun formatDate(inputDate: String): String {
-        val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val outputFormat = SimpleDateFormat("dd MMM", Locale.getDefault())
-
-        val outputDate = inputFormat.parse(inputDate)
-        return outputFormat.format(outputDate ?: "")
     }
 }
