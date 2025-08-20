@@ -8,6 +8,7 @@ import retrofit2.http.Body
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
+import retrofit2.http.Query
 
 interface ApiInterface {
 
@@ -17,7 +18,7 @@ interface ApiInterface {
     ): Credential.UserCredential
 
     @Multipart
-    @POST("api1/api/cartoonize")
+    @POST("api1/cartoonize")
     suspend fun cartoonize(
         @Part file: MultipartBody.Part
     ): ResponseBody
@@ -47,15 +48,15 @@ interface ApiInterface {
     @POST("api1/api/solid")
     suspend fun solidBg(
         @Part file: MultipartBody.Part,
-        @Part("color") color: RequestBody
+        @Query("color") color: String
     ): ResponseBody
 
     @Multipart
     @POST("api1/api/gradient")
     suspend fun gradientBg(
         @Part file: MultipartBody.Part,
-        @Part("color1") color1: RequestBody,
-        @Part("color2") color2: RequestBody
+        @Query("color1") color1: String,
+        @Query("color2") color2: String
     ): ResponseBody
 
     @Multipart
@@ -64,12 +65,3 @@ interface ApiInterface {
         @Part file: MultipartBody.Part
     ): ResponseBody
 }
-
-//interface ApiInterface8003 {
-//    @Multipart
-//    @POST("api/colorize/")
-//    suspend fun colorizeImage(
-//        @Part image: MultipartBody.Part
-//    ): ResponseBody
-//
-//}

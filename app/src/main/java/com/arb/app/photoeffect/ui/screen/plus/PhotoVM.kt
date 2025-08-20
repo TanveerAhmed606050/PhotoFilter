@@ -1,6 +1,7 @@
 package com.arb.app.photoeffect.ui.screen.plus
 
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -67,6 +68,7 @@ class PhotoVM @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             isLoading = true
             try {
+                Log.d("lsdjg", "solidBgApi: $solidDto")
                 bitmap = photoRepository.solidBgApi(solidDto)
             } finally {
                 isLoading = false

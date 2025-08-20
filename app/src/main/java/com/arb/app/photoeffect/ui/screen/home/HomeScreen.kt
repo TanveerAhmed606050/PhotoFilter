@@ -154,7 +154,6 @@ fun HomeScreenUI(
                 onPhotoClick = { Toast.makeText(context, "Coming soon", Toast.LENGTH_LONG).show() }
             )
         }
-
     }
 }
 

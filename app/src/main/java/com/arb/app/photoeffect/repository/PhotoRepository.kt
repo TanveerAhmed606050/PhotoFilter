@@ -31,8 +31,8 @@ class PhotoRepository @Inject constructor(
     suspend fun gradientBgApi(ingredientDto: IngredientDto): Bitmap? {
         val response = apiInterface.gradientBg(
             ingredientDto.file,
-            ingredientDto.color1.toRequestBody("text/plain".toMediaTypeOrNull()),
-            ingredientDto.color2.toRequestBody("text/plain".toMediaTypeOrNull())
+            ingredientDto.color1,
+            ingredientDto.color2
         )
         val imageBytes = response.bytes()
         return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
@@ -52,7 +52,7 @@ class PhotoRepository @Inject constructor(
     suspend fun solidBgApi(solidDto: SolidDto): Bitmap? {
         val response = apiInterface.solidBg(
             solidDto.image,
-            solidDto.color.toRequestBody("text/plain".toMediaTypeOrNull())
+            solidDto.color
         )
 
         val imageBytes = response.bytes()

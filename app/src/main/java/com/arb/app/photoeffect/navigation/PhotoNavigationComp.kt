@@ -75,13 +75,13 @@ fun PhotoBottomNavigationBar(
             Column(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .offset(y = (-80).dp) // Moves it upward to overlap
+                    .offset(y = (-60).dp) // Moves it upward to overlap
                     .clickable { navigateToTopLevelDestination(centerItem) },
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Box(
                     modifier = Modifier
-                        .size(64.dp)
+                        .size(62.dp)
                         .clip(CircleShape)
                         .background(DarkBlue),
                     contentAlignment = Alignment.Center
@@ -90,7 +90,7 @@ fun PhotoBottomNavigationBar(
                         painter = painterResource(id = R.drawable.plus_circle),
                         contentDescription = null,
                         modifier = Modifier.size(42.dp),
-                        tint = Color.Unspecified
+                        tint = Color.White
                     )
                 }
             }
